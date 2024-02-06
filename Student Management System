@@ -1,1 +1,292 @@
 
+eXAMPLE 1 IS HAVING SELECT CODE WITH COLLECTION:
+
+Dbcode.java
+------------------
+package pack;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+public class Dbcode {
+private Connection con;
+public void conn() throws Exception
+{
+   Class.forName("com.mysql.cj.jdbc.Driver");
+   con=DriverManager.getConnection("jdbc:mysql://localhost:3306/M_school",
+           "root","accord");
+}
+public boolean login(String user,String pass) throws SQLException
+{
+   Statement s=con.createStatement();
+   ResultSet rs=s.executeQuery("select * from login");
+   while(rs.next())
+   {
+       if(user.equals(rs.getString("user")) && pass.equals(rs.getString("pass")))
+       {
+           return true;
+       }
+   }
+   return false;
+}
+public int insert(String name,String course,int fees,String dob) throws SQLException
+{
+   PreparedStatement ps=con.prepareStatement
+           ("insert into sinfo(name,course,fees,dob) values(?,?,?,?)");
+   ps.setString(1, name);
+   ps.setString(2, course);
+   ps.setInt(3, fees);
+   ps.setString(4, dob);
+   return ps.executeUpdate();
+
+}
+public ArrayList<Student> view() throws Exception
+{
+   ArrayList<Student> a=new ArrayList<Student>();
+   Statement s=con.createStatement();
+   ResultSet rs=s.executeQuery("select * from sinfo");
+   while(rs.next())
+   {
+       Student s1=new Student(rs.getInt("id"),rs.getString("name"),rs.getString("course"),
+       rs.getInt("fees"),rs.getString("dob"));
+       a.add(s1);
+   }
+   return a;
+}
+}
+=========================================================================================
+Student.java
+----------------
+package pack;
+
+public class Student {
+
+   private int id;
+   private String name,course;
+   private int fees;
+   private String dob;
+   public Student(int id, String name, String course, int fees, String dob) {
+       super();
+       this.id = id;
+       this.name = name;
+       this.course = course;
+       this.fees = fees;
+       this.dob = dob;
+       
+   }
+   public int getId() {
+       return id;
+   }
+   public void setId(int id) {
+       this.id = id;
+   }
+   public String getName() {
+       return name;
+   }
+   public void setName(String name) {
+       this.name = name;
+   }
+   public String getCourse() {
+       return course;
+   }
+   public void setCourse(String course) {
+       this.course = course;
+   }
+   public int getFees() {
+       return fees;
+   }
+   public void setFees(int fees) {
+       this.fees = fees;
+   }
+   public String getDob() {
+       return dob;
+   }
+   public void setDob(String dob) {
+       this.dob = dob;
+   }
+   
+}
+===============================================================================================
+
+package pack;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class Dbcode {
+
+   private Connection con;
+   public Dbcode() throws ClassNotFoundException, SQLException
+   {
+       Class.forName("com.mysql.cj.jdbc.Driver");
+       con=DriverManager.getConnection
+               ("jdbc:mysql://localhost:3308/bank"
+                       , "root","accord");
+   }
+   public boolean login(String user,String pass) throws SQLException
+   {
+       String q="select * from login";
+       Statement s=con.createStatement();
+       ResultSet rs=s.executeQuery(q);
+       while(rs.next())
+       {
+           if(rs.getString("user").equals(user)&&
+                   rs.getString("pass").equals(pass))
+           {
+               return true;
+           }
+       }
+       return false;
+   }
+   public int insert(String name,String act,int bal)
+           throws SQLException
+   {
+       String q="insert into customer(name,actype,bal) values(?,?,?)";
+       PreparedStatement ps=con.prepareStatement(q);
+       ps.setString(1, name);
+       ps.setString(2, act);
+       ps.setInt(3, bal);
+       
+       return ps.executeUpdate();
+   }
+   public void view() throws SQLException
+   {
+       String q="select * from customer";
+       Statement s=con.createStatement();
+       ResultSet rs=s.executeQuery(q);
+       while(rs.next())
+       {
+           System.out.println(rs.getLong("acno")+"\t"+
+       rs.getString("name")+"\t"+rs.getString("actype")+
+       "\t"+rs.getInt("bal"));
+       }
+   }
+   public int update(int bal,long acno) throws SQLException
+   {
+       String q="update customer set bal=? where acno=?";
+       PreparedStatement ps=con.prepareStatement(q);
+       ps.setLong(2, acno);
+       ps.setInt(1, bal);
+       return ps.executeUpdate();
+   }
+   public int delete(long acno) throws SQLException
+   {
+       String q="delete from customer where acno=?";
+       PreparedStatement ps=con.prepareStatement(q);
+       ps.setLong(1, acno);    
+       return ps.executeUpdate();
+   }
+}
+==========================================================================
+
+eXAMPLE 2:
+package pack;
+
+import java.util.Scanner;
+
+public class Main {
+
+   public static void main(String[] args) {
+       
+       Scanner sc=new Scanner(System.in);
+       int i=0;
+       for(i=2;i>=0;i--) {
+           boolean b=true;
+       System.out.println("=====WElcomes To Login Page=====");
+       System.out.print("Username:");
+       String u=sc.next();
+       System.out.print("Password:");
+       String p=sc.next();
+       System.out.println("---------------------------------");
+       
+       try {
+       Dbcode d=new Dbcode();
+       if(d.login(u, p))
+       {
+           while(true) {
+           System.out.println("=====Welcomes To Home Page====");
+           System.out.println("1. Add New Customer");
+           System.out.println("2. View Customer Details");
+           System.out.println("3. Update the Balance");
+           System.out.println("4. Delete the Customer");
+           System.out.println("5. Logout");
+           System.out.println("-----------------------------");
+           int opt=sc.nextInt();
+           if(opt==1)
+           {
+               System.out.println("Enter a Name");
+               String name=sc.next();
+
+               System.out.println("Enter a Account Type");
+               String act=sc.next();
+
+               System.out.println("Enter a Balance");
+               int bal=sc.nextInt();
+               
+               if(d.insert(name, act, bal)>0)
+               {
+                   System.out.println("New Customer Added Successfully");
+               }
+               
+           }else if(opt==2)
+           {
+               d.view();
+           }else if(opt==3)
+           {
+               System.out.println("Enter a New Balance");
+               int bal=sc.nextInt();
+               System.out.println("Enter a Account Number");
+               long acno=sc.nextLong();
+               if(d.update(bal, acno)>0)
+               {
+                   System.out.println("Balance Updated");
+               }
+           }else if(opt==4)
+           {
+               System.out.println("Enter a Account Number");
+               long acno=sc.nextLong();
+               if(d.delete(acno)>0)
+               {
+                   System.out.println("Deleted");
+               }
+           }else if(opt==5)
+           {
+               System.out.println("Logout Successfully........");
+               break;
+           }
+           System.out.println("===================================");
+           }
+       }else
+       {
+           System.out.println("Invalid username and password");
+           System.out.println("You have Only "+i+" Attempts");
+           b=false;
+           if(i==0)
+           {
+               break;
+           }
+       }
+       }catch(Exception e)
+       {
+           System.out.println(e);
+       }
+       if(i!=0&&b) {
+       System.out.println("Do you want Exit?(Y/N)");
+       i=sc.next().charAt(0)=='Y'?3:0;
+       }
+       }
+       sc.close();
+       
+
+   }
+
+}
