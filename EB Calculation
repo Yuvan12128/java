@@ -1,0 +1,17 @@
+import java.util.Scanner;
+class ebcalculation{
+public static void main(String []args){
+	double total;
+Scanner sc=new Scanner(System.in);
+System.out.println("enter your unite: ");
+int w=sc.nextInt();
+
+System.out.println("enter your hours: ");
+int h=sc.nextInt();
+
+ total=w*h;
+ total=total/1000;
+ System.out.println(total+"unite");
+}
+
+}
