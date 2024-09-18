@@ -1,0 +1,5 @@
+package com.yuvan.dao;
+
+public interface UserDAO {
+
+}

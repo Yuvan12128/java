@@ -1,0 +1,16 @@
+package com.yuvan.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import com.yuvan.model.User;
+
+@Controller
+public class UserController {
+	@RequestMapping("addUser")
+	public String user(User user) {
+		return "index.jsp";
+	}
+	
+	
+
+}

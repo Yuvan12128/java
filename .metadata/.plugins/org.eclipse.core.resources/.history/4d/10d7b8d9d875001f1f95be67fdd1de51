@@ -1,0 +1,37 @@
+package com.yuvan.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.yuvan.dao.UserDAO;
+import com.yuvan.model.User;
+
+@Controller
+public class UserController {
+	
+	@Autowired
+	UserDAO userdao;
+	
+	@RequestMapping("index")
+	public String user() {
+		return "index.jsp";
+	}
+	
+	@RequestMapping("addUser")
+	public String addUser(User user) {
+		userdao.save(user);
+		
+		return "index.jsp";
+	}
+	
+	@RequestMapping("getUser")
+	public ModelAndView getUser(@RequestParam int id) {
+		ModelAndView mav = new ModelAndView("showUser.jsp");
+		User user =userdao.findById(id).orElse(null);
+		return mav;
+	}
+
+}
